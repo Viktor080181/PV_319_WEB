@@ -158,8 +158,8 @@ function tickCountdown()
     if(months>0) date = (date%(months*SECONDS_IN_MONTH));
     let weeks   = Math.floor(date/SECONDS_IN_WEEK); str_date += `Weeks:${weeks},`;
     if(weeks>0) date = (date%(weeks*SECONDS_IN_WEEK));
-    let days    = Math.floor(date/SECONDS_IN_DAY);  str_date += `Days:${days},`;
-
+    let days    = Math.ceil(date/SECONDS_IN_DAY);  str_date += `Days:${days},`;
+    document.getElementById("date-reminded").innerHTML = str_date;
     ////////////////////////////////////////////////////////////////////////////
 
     let hours = Math.floor(time_of_day/SECONDS_IN_HOUR);
