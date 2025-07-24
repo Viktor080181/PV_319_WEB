@@ -135,28 +135,48 @@ function tickCountdown()
     document.getElementById("target-time-value").innerHTML = targetTime;
 
     console.log(`targetTime timezoneOffset:\t${now.getTimezoneOffset()}`);
-
+    ////////////////////////////////////////////////////////////////////////////
     const SECONDS_IN_MINUTE = 60;
     const SECONDS_IN_HOUR = 3600;
     const SECONDS_IN_DAY = 86400;
-	const SECONDS_IN_WEEK = SECONDS_IN_DAY * 7;
-	const DAYS_IN_MOUNTH = 365.25 / 12;
-	const SECONDS_IN_YEAR = SECONDS_IN_DAY * 365 + SECONDS_IN_HOUR * 6;
-	let time_of_day = timestamp % SECONDS_IN_DAY;
-	let hours = Math.floor(time_of_day / SECONDS_IN_HOUR);
-	if (hours > 0) time_of_day = (time_of_day % (hours * SECONDS_IN_HOUR));
+    const SECONDS_IN_WEEK = SECONDS_IN_DAY*7;
+    const DAYS_IN_MONTH = 365.25/12;
+    const SECONDS_IN_MONTH = SECONDS_IN_DAY*DAYS_IN_MONTH;
+    const SECONDS_IN_YEAR = SECONDS_IN_DAY*365 + SECONDS_IN_HOUR*6;
 
-	let minutes = Math.floor(time_of_day / SECONDS_IN_MINUTE);
-	if (minutes > 0) time_of_day = (time_of_day % (minutes * SECONDS_IN_MINUTE));
+    ////////////////////////////////////////////////////////////////////////////
+    //https://stackoverflow.com/questions/14/difference-between-math-floor-and-math-truncate
+    let time_of_day = timestamp % SECONDS_IN_DAY;
+    //Убираем время дня из timestamp:
+    let date = Math.floor(timestamp/SECONDS_IN_DAY);
+    date = date * SECONDS_IN_DAY;
 
-	let seconds = time_of_day;
+    let str_date = '';
+    let years   = Math.floor(date/SECONDS_IN_YEAR); str_date += `Years:${years},`;
+    if(years>0) date = (date%(years*SECONDS_IN_YEAR));
+    let months = Math.floor(date/SECONDS_IN_MONTH);str_date += `Months:${months},`;
+    if(months>0) date = (date%(months*SECONDS_IN_MONTH));
+    let weeks   = Math.floor(date/SECONDS_IN_WEEK); str_date += `Weeks:${weeks},`;
+    if(weeks>0) date = (date%(weeks*SECONDS_IN_WEEK));
+    let days    = Math.floor(date/SECONDS_IN_DAY);  str_date += `Days:${days},`;
 
-	/////////////////////////////////////////////////
-	document.getElementById("hours-unit").innerHTML = addLeadingZero(hours);
-	document.getElementById("minutes-unit").innerHTML = addLeadingZero(minutes);
-	document.getElementById("seconds-unit").innerHTML = addLeadingZero(seconds);
+    ////////////////////////////////////////////////////////////////////////////
 
+    let hours = Math.floor(time_of_day/SECONDS_IN_HOUR);
+    if(hours > 0) time_of_day = (time_of_day%(hours*SECONDS_IN_HOUR));
 
-	////////////////////////////////////////////
+    let minutes = Math.floor(time_of_day/SECONDS_IN_MINUTE);
+    if(minutes > 0) time_of_day = (time_of_day%(minutes*SECONDS_IN_MINUTE));
+
+    let seconds = time_of_day;
+
+    ////////////////////////////////////////////////////////////////////////////
+
+    document.getElementById("hours-unit").innerHTML = addLeadingZero(hours);
+    document.getElementById("minutes-unit").innerHTML = addLeadingZero(minutes);
+    document.getElementById("seconds-unit").innerHTML = addLeadingZero(seconds);
+
+    ////////////////////////////////////////////////////////////////////////////
+
     setTimeout(tickCountdown, 100);
 }
