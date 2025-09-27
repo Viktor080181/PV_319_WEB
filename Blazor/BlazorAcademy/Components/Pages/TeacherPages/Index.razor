@@ -19,10 +19,66 @@
     <PropertyColumn Sortable="true" Title="Фамилия" Property="teacher => teacher.last_name" />
     <PropertyColumn Sortable="true" Title="Имя" Property="teacher => teacher.first_name" />
     <PropertyColumn Sortable="true" Title="Отчество" Property="teacher => teacher.middle_name" />
-    <PropertyColumn Sortable="true" Title="Дата рождения" Property="teacher => teacher.birth_date" />
+
+    <!-- Дата рождения в формате YYYY.MM.DD -->
+    <TemplateColumn Sortable="true" Title="Дата рождения">
+        <ChildContent>
+            @if (context.birth_date != default)
+            {
+                @context.birth_date.ToString("yyyy.MM.dd")
+            }
+            else
+            {
+                <span>—</span>
+            }
+        </ChildContent>
+    </TemplateColumn>
+
+    <!-- Возраст -->
+    <TemplateColumn Sortable="true" Title="Возраст">
+        <ChildContent>
+            @if (context.birth_date != default)
+            {
+                @(CalculateAge(context.birth_date) + " лет")
+            }
+            else
+            {
+                <span>—</span>
+            }
+        </ChildContent>
+    </TemplateColumn>
+
     <PropertyColumn Sortable="true" Property="teacher => teacher.email" />
     <PropertyColumn Sortable="true" Title="Телефон" Property="teacher => teacher.phone" />
-    <PropertyColumn Sortable="true" Title="Работает с" Property="teacher => teacher.work_since" />
+
+    <!-- Форматирование "Работает с" -->
+    <TemplateColumn Sortable="true" Title="Работает с">
+        <ChildContent>
+            @if (context.work_since != default)
+            {
+                @context.work_since.ToString("yyyy.MM.dd")
+            }
+            else
+            {
+                <span>—</span>
+            }
+        </ChildContent>
+    </TemplateColumn>
+
+    <!-- Опыт работы (стаж в годах) -->
+    <TemplateColumn Sortable="true" Title="Опыт работы">
+        <ChildContent>
+            @if (context.work_since != default)
+            {
+                @(CalculateExperience(context.work_since) + " лет")
+            }
+            else
+            {
+                <span>—</span>
+            }
+        </ChildContent>
+    </TemplateColumn>
+
     <PropertyColumn Sortable="true" Title="Ставка за пару" Property="teacher => teacher.rate" />
     @* <PropertyColumn Property="teacher => teacher.photo" /> *@
 
@@ -42,4 +98,22 @@
     }
 
     public async ValueTask DisposeAsync() => await context.DisposeAsync();
+
+    // Метод для расчёта возраста (DateOnly)
+    private int CalculateAge(DateOnly birthDate)
+    {
+        var today = DateOnly.FromDateTime(DateTime.Today);
+        int age = today.Year - birthDate.Year;
+        if (birthDate > today.AddYears(-age)) age--;
+        return age;
+    }
+
+    // Метод для расчёта опыта работы (стаж в годах, DateOnly)
+    private int CalculateExperience(DateOnly workSinceDate)
+    {
+        var today = DateOnly.FromDateTime(DateTime.Today);
+        int experience = today.Year - workSinceDate.Year;
+        if (workSinceDate > today.AddYears(-experience)) experience--;
+        return experience;
+    }
 }
